@@ -1073,22 +1073,22 @@ class BsRequest < ApplicationRecord
     newactions.each { |a| bs_request_actions << a }
   end
 
-  def forward_to(project:, package: nil, options: {})
+  def forward_to(fwd_targets, options: {})
     new_request = BsRequest.new(description: options[:description])
     BsRequest.transaction do
-      bs_request_actions.where(type: 'submit').find_each do |action|
+      bs_request_actions.where(type: 'submit').find_each.with_index do |action, index|
         rev = Directory.hashed(project: action.target_project, package: action.target_package)['rev']
 
         opts = { source_project: action.target_project,
                  source_package: action.target_package,
                  source_rev: rev,
-                 target_project: project,
-                 target_package: package,
+                 target_project: fwd_targets[index]['tgt_prj'],
+                 target_package: fwd_targets[index]['tgt_pkg'],
                  type: action.type }
         new_request.bs_request_actions.build(opts)
 
-        new_request.save!
       end
+      new_request.save!
     end
 
     new_request

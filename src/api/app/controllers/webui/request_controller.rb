@@ -279,16 +279,20 @@ class Webui::RequestController < Webui::WebuiController
     flash[:success] = "Request #{params[:number]} accepted"
 
     # Check if we have to forward this request to other projects / packages
+    return if params.keys.grep((/^forward.*/)).blank?
+    fwd_targets = []
+
     params.keys.grep(/^forward.*/).each do |fwd|
-      forward_request_to(fwd)
+      target = {}
+      target['tgt_prj'], target['tgt_pkg'] = params[fwd].split('_#_')
+      fwd_targets.append(target)
     end
+    forward_request_to(fwd_targets)
   end
 
-  def forward_request_to(fwd)
-    # split off 'forward_' and split into project and package
-    tgt_prj, tgt_pkg = params[fwd].split('_#_')
+  def forward_request_to(fwd_targets)
     begin
-      forwarded_request = @bs_request.forward_to(project: tgt_prj, package: tgt_pkg, options: params.slice(:description))
+      forwarded_request = @bs_request.forward_to(fwd_targets, options: params.slice(:description))
     rescue APIError, ActiveRecord::RecordInvalid => e
       error_string = "Failed to forward BsRequest: #{@bs_request.number}, error: #{e}, params: #{params.inspect}"
       error_string << ", request: #{e.record.inspect}" if e.respond_to?(:record)
@@ -297,6 +301,7 @@ class Webui::RequestController < Webui::WebuiController
       return
     end
 
+    # TODO: adapt flash message handling
     target_link = ActionController::Base.helpers.link_to("#{tgt_prj} / #{tgt_pkg}", package_show_url(project: tgt_prj, package: tgt_pkg))
     request_link = ActionController::Base.helpers.link_to("request #{forwarded_request.number}", request_show_path(forwarded_request.number))
     flash[:success] += " and forwarded to #{target_link} (#{request_link})"

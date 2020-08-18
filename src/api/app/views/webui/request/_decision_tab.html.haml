@@ -2,19 +2,28 @@
   = hidden_field_tag(:number, request_number)
   %p
     = text_area_tag(:reason, nil, placeholder: 'Please add a comment', rows: 4, class: 'w-100 form-control')
-  - if single_action_request && is_target_maintainer && state.in?(['new', 'review'])
-    - if !action[:creator_is_target_maintainer] && action[:type] == :submit
-      .custom-control.custom-checkbox
-        = check_box_tag('add_submitter_as_maintainer_0', "#{action[:tprj]}_#_#{action[:tpkg]}", false, class: 'custom-control-input')
-        %label.custom-control-label{ for: 'add_submitter_as_maintainer_0' }
-          Add #{link_to(request_creator, user_path(request_creator))} as maintainer for
-          #{project_or_package_link(project: action[:tprj], package: action[:tpkg], short: true)}
-    - (action[:forward] || []).each_with_index do |forward, index|
-      .custom-control.custom-checkbox
-        = check_box_tag("forward-#{index}", "#{forward[:project]}_#_#{forward[:package]}", true, class: 'custom-control-input')
-        %label.custom-control-label{ for: "forward-#{index}" }
-          Forward submit request to
-          #{project_or_package_link(project: forward[:project], package: forward[:package], short: true)}
+  - if is_target_maintainer && state.in?(['new', 'review'])
+    - if single_action_request
+      - if !action[:creator_is_target_maintainer] && action[:type] == :submit
+        .custom-control.custom-checkbox
+          = check_box_tag('add_submitter_as_maintainer_0', "#{action[:tprj]}_#_#{action[:tpkg]}", false, class: 'custom-control-input')
+          %label.custom-control-label{ for: 'add_submitter_as_maintainer_0' }
+            Add #{link_to(request_creator, user_path(request_creator))} as maintainer for
+            #{project_or_package_link(project: action[:tprj], package: action[:tpkg], short: true)}
+      - (action[:forward] || []).each_with_index do |forward, index|
+        .custom-control.custom-checkbox
+          = check_box_tag("forward-#{index}", "#{forward[:project]}_#_#{forward[:package]}", true, class: 'custom-control-input')
+          %label.custom-control-label{ for: "forward-#{index}" }
+            Forward submit request to
+            #{project_or_package_link(project: forward[:project], package: forward[:package], short: true)}
+    - else
+      - @actions.each_with_index do |action, index|
+        - break if action[:forward].nil?
+        .custom-control.custom-checkbox
+          = check_box_tag("forward-#{index}", "#{action[:forward].first[:project]}_#_#{action[:forward].first[:package]}", true, class: 'custom-control-input')
+          %label.custom-control-label{ for: "forward-#{index}" }
+            Forward submit request to
+            #{project_or_package_link(project: action[:forward].first[:project], package: action[:forward].first[:package], short: true)}
     %hr
   - if is_author && state.in?(['new', 'review', 'declined'])
     = submit_tag 'Revoke request', name: 'revoked', class: 'btn btn-danger mr-2'
