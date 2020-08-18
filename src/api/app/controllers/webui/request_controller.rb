@@ -137,7 +137,7 @@ class Webui::RequestController < Webui::WebuiController
   def changerequest
     changestate = (['accepted', 'declined', 'revoked', 'new'] & params.keys).last
 
-    if change_state(changestate, params)
+    if change_state(@bs_request, changestate, params)
       # TODO: Make this work for each submit action individually
       if params[:add_submitter_as_maintainer_0]
         if changestate != 'accepted'
@@ -256,28 +256,22 @@ class Webui::RequestController < Webui::WebuiController
     end.compact.uniq
   end
 
-  def change_state(newstate, params)
-    request = BsRequest.find_by_number(params[:number])
-    if request.nil?
-      flash[:error] = 'Unable to load request'
-    else
-      # FIXME: make force optional, it hides warnings!
-      opts = {
-        newstate: newstate,
-        force: true,
-        user: User.session!.login,
-        comment: params[:reason]
-      }
-      begin
-        request.change_state(opts)
-        flash[:success] = "Request #{newstate}!"
-        return true
-      rescue APIError => e
-        flash[:error] = "Failed to change state: #{e.message}!"
-        return false
-      end
+  def change_state(request, newstate, params)
+    # FIXME: make force optional, it hides warnings!
+    opts = {
+      newstate: newstate,
+      force: true,
+      user: User.session!.login,
+      comment: params[:reason]
+    }
+    begin
+      request.change_state(opts)
+      flash[:success] = "Request #{newstate}!"
+      return true
+    rescue APIError => e
+      flash[:error] = "Failed to change state: #{e.message}!"
+      return false
     end
-
     false
   end
 
