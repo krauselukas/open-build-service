@@ -965,6 +965,23 @@ class BsRequest < ApplicationRecord
     end
   end
 
+  def forwardable_actions
+    forwardable_actions = []
+    bs_request_actions.each do |action|
+      if action.forwardable?
+        forwardable_actions << action
+      end
+    end
+    forwardable_actions
+  end
+
+  def forwarding_options
+    forwardable_actions.each do |action|
+      faction.create_forwarding
+    end
+  end
+
+
   def webui_actions(opts = {})
     # TODO: Fix!
     actions = []
@@ -991,33 +1008,7 @@ class BsRequest < ApplicationRecord
         superseded_bs_request_action = xml.find_action_with_same_target(opts[:diff_to_superseded])
         action[:sourcediff] = xml.webui_infos(opts.merge(superseded_bs_request_action: superseded_bs_request_action)) if with_diff
         creator = User.find_by_login(self.creator)
-        target_package = Package.find_by_project_and_name(action[:tprj], action[:tpkg])
         action[:creator_is_target_maintainer] = true if creator.has_local_role?(Role.hashed['maintainer'], target_package)
-
-        if target_package
-          linkinfo = target_package.linkinfo
-          target_package.developed_packages.each do |dev_pkg|
-            action[:forward] ||= []
-            action[:forward] << { project: dev_pkg.project.name, package: dev_pkg.name, type: 'devel' }
-          end
-          if linkinfo
-            lprj = linkinfo['project']
-            lpkg = linkinfo['package']
-            link_is_already_devel = false
-            if action[:forward]
-              action[:forward].each do |forward|
-                if forward[:project] == lprj && forward[:package] == lpkg
-                  link_is_already_devel = true
-                  break
-                end
-              end
-            end
-            unless link_is_already_devel
-              action[:forward] ||= []
-              action[:forward] << { project: linkinfo['project'], package: linkinfo['package'], type: 'link' }
-            end
-          end
-        end
 
       when :delete then
         if action[:tpkg]
@@ -1075,7 +1066,9 @@ class BsRequest < ApplicationRecord
 
   def forward_to(fwd_targets, options: {})
     new_request = BsRequest.new(description: options[:description])
+
     BsRequest.transaction do
+
       bs_request_actions.where(type: 'submit').find_each.with_index do |action, index|
         rev = Directory.hashed(project: action.target_project, package: action.target_package)['rev']
 

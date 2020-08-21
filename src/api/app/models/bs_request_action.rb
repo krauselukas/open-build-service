@@ -115,6 +115,30 @@ class BsRequestAction < ApplicationRecord
     Project.unscoped.is_remote_project?(source_project, true)
   end
 
+  def forwardable?
+    return false unless self.type == 'submit'
+    return false if self.target_package_object.nil?
+    return false unless self.target_package_object.developed_packages.any? || self.target_package_object.linkinfo
+    true
+  end
+
+  def forwarding_targets
+    target_package = self.target_package_object
+    forwarding_targets = target_package.developed_packages
+    linkinfo = target_package.linkinfo
+    return forwarding_targets unless linkinfo
+
+    unless forwarding_targets.any? { |t| t.name == linkinfo['package'] && t.project.name == linkinfo['project'] }
+      forwarding_targets.append(Package.find_by_project_and_name(linkinfo['project'], linkinfo['package']))
+    end
+
+    forwarding_targets
+  end
+
+  def create_forwarding
+    rev = Directory.hashed(project: self.target_project, package: self.target_package)['rev']
+  end
+
   def store_from_xml(hash)
     source = hash.delete('source')
     if source

@@ -118,6 +118,8 @@ class Webui::RequestController < Webui::WebuiController
     @comment = Comment.new
 
     @actions = @bs_request.webui_actions(filelimit: diff_limit, tarlimit: diff_limit, diff_to_superseded: @diff_to_superseded, diffs: true)
+    @forwardable_actions = @bs_request.forwardable_actions
+    #binding.pry
     # print a hint that the diff is not fully shown (this only needs to be verified for submit actions)
     @not_full_diff = BsRequest.truncated_diffs?(@actions)
 
