@@ -306,7 +306,8 @@ OBSApi::Application.routes.draw do
     scope :my do
       resources :tasks, only: [:index], controller: 'webui/users/tasks', as: :my_tasks
 
-      resources :notifications, only: [:index, :update], controller: 'webui/users/notifications', as: :my_notifications
+      resources :notifications, only: [:index], controller: 'webui/users/notifications', as: :my_notifications
+      resource :notification, only: [:update], controller: 'webui/users/notifications', as: :my_notification
 
       resources :subscriptions, only: [:index], controller: 'webui/users/subscriptions', as: :my_subscriptions do
         collection do

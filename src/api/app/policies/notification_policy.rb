@@ -1,6 +1,7 @@
 class NotificationPolicy < ApplicationPolicy
-  def update?
-    return true if record.subscriber_type == 'User' && record.subscriber_id == user.id
-    return true if record.subscriber_type == 'Group' && record.subscriber_id.include?(user.groups.ids)
+  class Scope < Scope
+    def resolve
+      scope.for_web.where(subscriber_type: 'User', subscriber_id: user.id).or(scope.where(subscriber_type: 'Group', subscriber_id: user.groups.ids))
+    end
   end
 end

@@ -1,19 +1,21 @@
 // TODO: As soon as notifications_redesign feature is 100% rolled out,
 // all the 'body.notifications-redesign' wrappers can be removed.
+$notifications-filter-box-height: 56px;
 
 body.notifications-redesign  {
   .notifications-grid-container {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr auto;
     grid-template-rows: auto;
     grid-template-areas:
-      "notifiable notifiable"
-      "content content"
-      "who-when action";
+      ". notifiable notifiable"
+      "notifiable-checkbox content content"
+      ". who-when action";
     column-gap: 0.5rem;
     row-gap: 0.25rem;
     align-items: start;
 
+    .notifiable-checkbox { grid-area: notifiable-checkbox; }
     .notifiable { grid-area: notifiable; }
     .who-when { grid-area: who-when; }
     .action { grid-area: action; }
@@ -54,10 +56,13 @@ body.notifications-redesign  {
 
     .notifications-grid-container {
       min-height: 6.25rem;
-      grid-template-columns: 1fr auto 3rem;
+      grid-template-columns: auto 1fr auto auto;
       grid-template-areas:
-        "notifiable who-when action"
-        "content content content";
+        ". notifiable who-when action"
+        "notifiable-checkbox content content content";
+    }
+    #notification-action-bar {
+      &.sticky-top { top: $top-navigation-height; }
     }
   }
 }
@@ -67,12 +72,19 @@ body.notifications-redesign  {
     #notifications-filter-desktop {
       &.show { border-top: 1px solid $gray-300; }
       &.sticky-top { top: $top-navigation-height; }
+      height: $notifications-filter-box-height;
+      // To not overlap with the notification action bar
+      z-index: calc(#{$zindex-sticky} + 1);
+
       #filters {
         max-height: 100vw; overflow: auto;
         -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
         -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
         box-shadow: 2px 3px 5px rgba(0,0,0,.2);
       }
+    }
+    #notification-action-bar {
+      &.sticky-top { top: calc(#{$top-navigation-height} + #{$notifications-filter-box-height}); }
     }
   }
 
