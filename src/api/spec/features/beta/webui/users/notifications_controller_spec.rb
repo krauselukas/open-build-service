@@ -39,7 +39,7 @@ RSpec.describe 'User notifications', type: :feature, js: true do
         before do
           find('#notifications-dropdown-trigger').click if mobile?
           within('#filters') { click_link('Comments') }
-          click_link("update-notification-#{notification_for_projects_comment.id}")
+          find("#notification_ids_[value='#{notification_for_projects_comment.id}']").set(true)
         end
 
         it 'keeps the Comments filter' do
@@ -70,7 +70,7 @@ RSpec.describe 'User notifications', type: :feature, js: true do
         before do
           find('#notifications-dropdown-trigger').click if mobile?
           within('#filters') { click_link(project.name) }
-          find_link(id: format('update-notification-%d', notification_for_projects_comment.id)).click
+          find("#notification_ids_[value='#{notification_for_projects_comment.id}']").set(true)
         end
 
         it 'keeps the project filter' do
