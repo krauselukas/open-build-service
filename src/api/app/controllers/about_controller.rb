@@ -5,6 +5,7 @@ class AboutController < ApplicationController
   before_action :set_response_format_to_xml
 
   def index
+    # cool comment
     @api_revision = CONFIG['version'].to_s
     @last_deployment = Git::LAST_DEPLOYMENT
     @commit = Git::COMMIT
