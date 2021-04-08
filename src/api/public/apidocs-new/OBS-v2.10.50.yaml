@@ -71,6 +71,8 @@ paths:
     $ref: 'paths/build_project_repository_buildconfig.yaml'
   /build/{project}/{repository}/{architecture}/_builddepinfo:
     $ref: 'paths/build_project_repository_arch_builddepinfo.yaml'
+  /build/{project_name}/{repository_name}/{architecture_name}/{package_name}:
+    $ref: 'paths/build_project_name_repo_name_arch_name_package_name.yaml'
 
   /configuration:
     $ref: 'paths/configuration.yaml'
