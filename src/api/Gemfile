@@ -7,12 +7,7 @@ end
 # Edit this Gemfile to bundle your application's dependencies.
 source 'https://rubygems.org'
 
-# Start the Rails application using src/api/Gemfile.next with `next rails s`
-if next?
-  gem 'rails', '~> 6.1'
-else
-  gem 'rails', '~> 6.0'
-end
+gem 'rails', '~> 6.1'
 
 # as our database
 gem 'mysql2'
