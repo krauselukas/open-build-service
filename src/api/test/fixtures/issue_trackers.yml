@@ -160,7 +160,7 @@ issue_trackers_39:
   url: http://openoffice.org/bugzilla/
   show_url: http://openoffice.org/bugzilla/show_bug.cgi?id=@@@
   regex: i#(\d+)
-  label: '@@@'
+  label: 'i#@@@'
   issues_updated: 2011-07-29 14:00:21.000000000 Z
   enable_fetch: 0
 issue_trackers_40:

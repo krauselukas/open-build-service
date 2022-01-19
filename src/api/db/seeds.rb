@@ -271,7 +271,7 @@ IssueTracker.where(name: 'i').first_or_create(description: 'OpenOffice.org Bugzi
                                               kind: 'bugzilla',
                                               regex: 'i#(\d+)',
                                               url: 'http://openoffice.org/bugzilla/',
-                                              label: 'boost#@@@',
+                                              label: 'i#@@@',
                                               show_url: 'http://openoffice.org/bugzilla/show_bug.cgi?id=@@@')
 IssueTracker.where(name: 'fate').first_or_create(description: 'openSUSE Feature Database',
                                                  kind: 'fate',
