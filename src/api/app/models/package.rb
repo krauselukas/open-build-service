@@ -416,9 +416,10 @@ class Package < ApplicationRecord
       retries = 10
       begin
         # NOTE: Its important that this job run in queue 'default' in order to avoid concurrency
-        # PackageUpdateIfDirtyJob.perform_later(id)
-        package = Package.find_by(id: id)
-        package.update_if_dirty if package.present?
+        binding.pry
+        PackageUpdateIfDirtyJob.perform_later(id)
+        # package = Package.find_by(id: id)
+        # package.update_if_dirty if package.present?
       rescue ActiveRecord::StatementInvalid
         # mysql lock errors in delayed job handling... we need to retry
         retries -= 1

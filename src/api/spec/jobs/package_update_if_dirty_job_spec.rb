@@ -20,8 +20,8 @@ RSpec.describe PackageUpdateIfDirtyJob, type: :job, vcr: true do
     end
 
     it 'creates issues from the text in the changes file' do
-      # The changes file contain: gh#cli/cli#1, CVE-2021-12345, and bsc#3
-      expect { subject }.to change(Issue, :count).by(3)
+      # The changes file contains: gh#cli/cli#1, CVE-2021-12345, bnc and bsc#3
+      expect { subject }.to change(Issue, :count).by(4)
     end
   end
 end
