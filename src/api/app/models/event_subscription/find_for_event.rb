@@ -7,6 +7,18 @@ class EventSubscription
     end
 
     def subscriptions(channel = :instant_email, debug = false)
+      if debug
+        ActiveRecord::Base.logger.silence do
+          receive_subscriptions(channel, true)
+        end
+      else
+        receive_subscriptions(channel)
+      end
+    end
+
+    private
+
+    def receive_subscriptions(channel, debug = false)
       @debug = debug
       receivers_and_subscriptions = {}
 
