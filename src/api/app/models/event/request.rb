@@ -84,10 +84,20 @@ module Event
       action_maintainers('sourceproject', 'sourcepackage')
     end
 
+    def source_project_watchers
+      source_watchers
+    end
+
+    def target_project_watchers
+      target_watchers
+    end
+
+    # TODO: Move the method content after all event subscriptions are migrated to use the new receiver role `source_project_watchers`
     def source_watchers
       source_or_target_project_watchers(project_type: 'sourceproject')
     end
 
+    # TODO: Move the method content after all event subscriptions are migrated to use the new receiver role `target_project_watchers`
     def target_watchers
       source_or_target_project_watchers(project_type: 'targetproject')
     end
