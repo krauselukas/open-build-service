@@ -62,6 +62,10 @@ class SCMWebhook
     github_ping? || gitea_ping?
   end
 
+  def create_event?
+    github_create?
+  end
+
   private
 
   def github_push_event?
@@ -118,5 +122,9 @@ class SCMWebhook
 
   def ignored_gitea_pull_request_action?
     gitea_pull_request? && ALLOWED_PULL_REQUEST_ACTIONS.exclude?(@payload[:action])
+  end
+
+  def github_create?
+    @payload[:scm] == 'github' && @payload[:event] == 'create'
   end
 end

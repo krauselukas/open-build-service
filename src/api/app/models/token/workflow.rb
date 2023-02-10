@@ -31,7 +31,7 @@ class Token::Workflow < Token
     workflow_run.update(response_url: @scm_webhook.payload[:api_endpoint])
 
     # We return early with a ping event, since it doesn't make sense to perform payload checks with it, just respond
-    if @scm_webhook.ping_event?
+    if @scm_webhook.ping_event? || @scm_webhook.create_event?
       SCMStatusReporter.new(@scm_webhook.payload, @scm_webhook.payload, scm_token, workflow_run, 'success', initial_report: true).call
       return []
     end
