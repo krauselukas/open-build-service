@@ -107,8 +107,10 @@ class Workflow
     branches_only = filters[:branches].fetch(:only, [])
     branches_ignore = filters[:branches].fetch(:ignore, [])
 
-    return true if branches_only.present? && branches_only.include?(scm_webhook.payload[:target_branch])
-    return true if branches_ignore.present? && branches_ignore.exclude?(scm_webhook.payload[:target_branch])
+    scm_webhook_branch =  scm_webhook.tag_push_event? ? scm_webhook.payload[:base_branch] : scm_webhook.payload[:target_branch]
+
+    return true if branches_only.present? && branches_only.include?(scm_webhook_branch)
+    return true if branches_ignore.present? && branches_ignore.exclude?(scm_webhook_branch)
 
     false
   end

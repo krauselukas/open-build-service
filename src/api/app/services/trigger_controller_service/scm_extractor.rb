@@ -151,7 +151,8 @@ module TriggerControllerService
       # 'target_branch' will contain a commit SHA
       payload.merge!({ tag_name: payload_ref.sub('refs/tags/', ''),
                        target_branch: @payload.dig(:head_commit, :id),
-                       commit_sha: @payload.dig(:head_commit, :id) })
+                       commit_sha: @payload.dig(:head_commit, :id),
+                       base_branch: @payload.dig(:base_ref).sub('refs/heads/', '') })
     end
 
     def gitlab_payload_tag(payload)
