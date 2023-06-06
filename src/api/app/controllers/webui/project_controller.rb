@@ -20,6 +20,8 @@ class Webui::ProjectController < Webui::WebuiController
   before_action :load_project_info, only: :show
 
   before_action :check_ajax, only: [:buildresult, :edit_comment_form]
+  # To track who changed the relationship for a user or group
+  before_action :set_paper_trail_whodunnit, only: [:save_person_or_group]
 
   after_action :verify_authorized, except: [:index, :autocomplete_projects, :autocomplete_incidents, :autocomplete_packages,
                                             :autocomplete_repositories, :users, :subprojects, :new, :show,
@@ -371,6 +373,10 @@ class Webui::ProjectController < Webui::WebuiController
   end
 
   private
+
+  def user_for_paper_trail
+    User.possibly_nobody
+  end
 
   def show_all?
     params[:all].to_s.casecmp?('true')

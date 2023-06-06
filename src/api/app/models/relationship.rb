@@ -77,6 +77,8 @@ class Relationship < ApplicationRecord
   after_destroy :discard_cache
   after_rollback :discard_cache
 
+  has_paper_trail
+
   RELATIONSHIP_CACHE_SEQUENCE = 'cache_sequence_for_forbidden_projects'.freeze
 
   def self.add_user(obj, user, role, ignore_lock = nil, check = nil)
