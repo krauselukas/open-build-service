@@ -349,6 +349,8 @@ OBSApi::Application.routes.draw do
 
       resource :notification, only: [:update], controller: 'webui/users/notifications', as: :my_notification
 
+      resources :audit_logs, only: [:index], controller: 'webui/users/audit_logs', as: :my_audit_logs
+
       resources :subscriptions, only: [:index], controller: 'webui/users/subscriptions', as: :my_subscriptions do
         collection do
           put 'update', as: :update
