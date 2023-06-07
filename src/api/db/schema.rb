@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_05_124314) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_07_112840) do
   create_table "architectures", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", options: "ENGINE=InnoDB ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "name", null: false, collation: "utf8mb3_general_ci"
     t.boolean "available", default: false
@@ -825,6 +825,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_124314) do
     t.index ["develproject_id"], name: "devel_project_id_index"
     t.index ["name"], name: "projects_name_index", unique: true
     t.index ["staging_workflow_id"], name: "index_projects_on_staging_workflow_id"
+  end
+
+  create_table "relationship_versions", charset: "utf8mb4", force: :cascade do |t|
+    t.string "item_type", limit: 191, null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object", size: :long
+    t.bigint "relationship_user_id"
+    t.bigint "relationship_group_id"
+    t.bigint "relationship_project_id"
+    t.bigint "relationship_package_id"
+    t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_relationship_versions_on_item_type_and_item_id"
   end
 
   create_table "relationships", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", options: "ENGINE=InnoDB ROW_FORMAT=DYNAMIC", force: :cascade do |t|

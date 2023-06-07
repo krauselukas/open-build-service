@@ -77,7 +77,7 @@ class Relationship < ApplicationRecord
   after_destroy :discard_cache
   after_rollback :discard_cache
 
-  has_paper_trail
+  has_paper_trail(versions: { class_name: 'RelationshipVersion' }, meta: { relationship_user_id: :user_id })
 
   RELATIONSHIP_CACHE_SEQUENCE = 'cache_sequence_for_forbidden_projects'.freeze
 
