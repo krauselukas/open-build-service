@@ -80,7 +80,74 @@ RSpec.describe 'Report', :js, :vcr do
   end
 
   describe 'Package' do
-    # TODO
+    let(:project) { create(:project, name: 'factory') }
+    let(:package) { create(:package_with_maintainer, maintainer: maintainer, project: project, name: 'against_the_rules') }
+
+    context 'reporting' do
+      context 'user without any role' do
+        before do
+          login(reporter)
+          visit package_show_path(project, package)
+        end
+
+        it 'creates the report' do
+          click_link 'Report Package'
+          find_by_id('report_category_forbidden_license').click
+          fill_in id: 'report_reason', with: 'This package does not follow the rules!'
+          click_button('Submit')
+
+          expect(page).to have_text('Package reported successfully')
+          expect(Report.count).to eq(1)
+          page.refresh
+          expect(page).to have_text('You reported this package.')
+          expect(page).not_to have_link('Report Package')
+        end
+      end
+
+      context 'user with maintainer role' do
+        before do
+          login(maintainer)
+          visit package_show_path(project, package)
+        end
+
+        it 'can not report' do
+          expect(page).not_to have_link('Report Package')
+        end
+      end
+
+      context 'user with admin role' do
+        let(:admin) { create(:admin_user, login: 'Admin') }
+
+        before do
+          login(admin)
+          visit package_show_path(project, package)
+        end
+
+        it 'can not report' do
+          expect(page).not_to have_link('Report Package')
+        end
+      end
+    end
+
+    context 'moderating' do
+      let!(:report_for_package) { create(:report, reportable: package, reason: 'This package does not follow the rules!', user: reporter) }
+
+      before do
+        login(moderator)
+        visit package_show_path(project, package)
+      end
+
+      it 'creates the decision' do
+        expect(page).to have_text('This package has 1 report .')
+        click_link('1 report')
+        fill_in id: 'decision_reason', with: 'Correct, license is forbidden.'
+        select 'favor', from: 'decision[kind]'
+        click_button('Submit')
+
+        expect(page).to have_text('Decision created successfully')
+        expect(Decision.count).to eq(1)
+      end
+    end
   end
 
   describe 'Comment' do
