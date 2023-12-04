@@ -1,0 +1,17 @@
+= @decision.inspect
+
+<hr/>
+- @decision.reports.each do |report|
+  = report.reason
+
+<hr/>
+- if @decision.kind == Decision.cleared
+  Cleared decision
+- else
+  Favored decision
+
+reason:
+= @decision.reason
+
+appealing reason:
+= @appeal.reason

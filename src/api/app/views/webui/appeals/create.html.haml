@@ -1,0 +1,5 @@
+= flash[:error].inspect
+= form_for(decision_appeal_path(@decision, @appeal), method: :post) do |form|
+  = form.label :reason, 'Reason for appealing the decision'
+  = form.text_field :reason
+  = form.submit
