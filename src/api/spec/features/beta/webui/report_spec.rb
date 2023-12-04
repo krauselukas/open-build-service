@@ -151,7 +151,38 @@ RSpec.describe 'Report', :js, :vcr do
   end
 
   describe 'Comment' do
-    # TODO
+    let(:spammer) { create(:confirmed_user, login: 'trouble_maker')}
+    let(:project) { create(:project, name: 'factory') }
+    let!(:comment_on_project) { create(:comment_project, commentable: project, user: spammer) }
+
+    context 'reporting' do
+      context 'user without any role and not the commenter' do
+        before do
+          login(reporter)
+          visit project_show_path(project)
+        end
+
+        it 'creates the report' do
+          within('div#comments') do
+            click_link('Report')
+          end
+
+          find_by_id('report_category_spam').click
+          fill_in id: 'report_reason', with: 'This comment is advertisement'
+          click_button('Submit')
+
+          expect(page).to have_text('Comment reported successfully')
+          expect(Report.count).to eq(1)
+          page.refresh
+          within('div#comments') do
+            expect(page).to have_text('You reported this comment.')
+            expect(page).not_to have_link('Report')
+          end
+        end
+      end
+
+
+    end
   end
 
   describe 'User' do
