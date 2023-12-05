@@ -3,6 +3,18 @@ class Appeal < ApplicationRecord
   belongs_to :decision, required: true
 
   validates_presence_of :reason
+
+  after_create :create_event
+
+  private
+
+  def create_event
+    Event::AppealCreated.create(event_parameters)
+  end
+
+  def event_parameters
+    { id: id, appellant_id: appellant.id, decision_id: decision.id, reason: reason }
+  end
 end
 
 # == Schema Information
