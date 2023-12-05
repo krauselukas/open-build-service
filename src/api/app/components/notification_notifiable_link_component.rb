@@ -57,6 +57,8 @@ class NotificationNotifiableLinkComponent < ApplicationComponent
       # https://trello.com/c/xrjOZGa7/45-ensure-all-reports-of-a-decision-point-to-the-same-reportable
       # This reportable won't be nil once we fix this: https://trello.com/c/vPDiLjIQ/66-prevent-the-creation-of-reports-without-reportable
       "Favored #{@notification.notifiable.reports.first.reportable&.class&.name} Report".squish
+    when 'Event::AppealCreated'
+      "Appeal for decision #{@notification.notifiable.decision.inspect}"
     when 'Event::WorkflowRunFail'
       'Workflow Run'
     end
@@ -117,6 +119,8 @@ class NotificationNotifiableLinkComponent < ApplicationComponent
     when 'Event::ClearedDecision', 'Event::FavoredDecision'
       reportable = @notification.notifiable.reports.first.reportable
       link_for_reportables(reportable)
+    when 'Event::AppealCreated'
+      Rails.application.routes.url_helpers.decision_appeal_path(@notification.notifiable.decision, @notification.notifiable)
     when 'Event::WorkflowRunFail'
       Rails.application.routes.url_helpers.token_workflow_run_path(@notification.notifiable.token, @notification.notifiable)
     end

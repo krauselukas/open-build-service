@@ -1,4 +1,18 @@
 = form_with(model: [@decision, @appeal], method: :post) do |form|
-  = form.label :reason, 'Reason for appealing the decision'
+  %h3 Reports:
+  %ul
+    - @decision.reports.each do |report|
+      %li
+        = link_to report.reportable_type, report.reportable
+        = report.reason
+
+  %h3 Decision:
+  - if @decision.kind == "favor"
+    %p Favored decision
+    %p reason:
+    = @decision.reason
+
+  %h3 Appeal:
+  %p= form.label :reason, 'Reason for appealing the decision'
   = form.text_field :reason
   = form.submit

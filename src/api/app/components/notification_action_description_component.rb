@@ -51,6 +51,8 @@ class NotificationActionDescriptionComponent < ApplicationComponent
       "'#{@notification.notifiable.moderator.login}' decided to clear the report. This is the reason:"
     when 'Event::FavoredDecision'
       "'#{@notification.notifiable.moderator.login}' decided to favor the report. This is the reason:"
+    when 'Event::AppealCreated'
+      "'#{@notification.notifiable.appellant.login}' appealled the following decision #{@notification.notifiable.decision.inspect}"
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity

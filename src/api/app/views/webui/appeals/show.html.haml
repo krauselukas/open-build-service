@@ -1,17 +1,16 @@
-= @decision.inspect
+%h3 Reports:
+%ul
+  - @decision.reports.each do |report|
+    %li
+      = link_to report.reportable_type, report.reportable
+      = report.reason
 
-<hr/>
-- @decision.reports.each do |report|
-  = report.reason
+%h3 Decision:
+- if @decision.kind == "favor"
+  %p Favored decision
+  %p reason:
+  = @decision.reason
 
-<hr/>
-- if @decision.kind == Decision.cleared
-  Cleared decision
-- else
-  Favored decision
-
-reason:
-= @decision.reason
-
-appealing reason:
+%h3 Appeal:
+%p Reason for appealing the decision
 = @appeal.reason
