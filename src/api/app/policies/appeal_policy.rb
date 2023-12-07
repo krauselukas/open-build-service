@@ -1,14 +1,18 @@
-class DecisionPolicy < ApplicationPolicy
-  def create?
-    return false unless Flipper.enabled?(:content_moderation, user)
-
-    user.is_moderator? || user.is_admin? || user.is_staff?
+class AppealPolicy < ApplicationPolicy
+  def new?
+    create?
   end
 
-  def appeal?
-    return false if record.kind? == 'cleared'
+  def show?
+    return true if record.appellant == user
 
-    report = record.reports.first
+    user.is_admin? || user.is_moderator? || user.is_staff?
+  end
+
+  def create?
+    return false if record.decision.kind? == 'cleared'
+
+    report = record.decision.reports.first
 
     case report.reportable_type
     when 'User'
