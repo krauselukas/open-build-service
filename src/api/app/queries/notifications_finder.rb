@@ -58,6 +58,10 @@ class NotificationsFinder
     @relation.where(event_type: 'Event::WorkflowRunFail', delivered: false)
   end
 
+  def for_appealed_decisions
+    @relation.where(event_type: 'Event::AppealCreated', delivered: false)
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity
   # We need to refactor this method, the `case` statement is way too big
   def for_notifiable_type(type = 'unread')

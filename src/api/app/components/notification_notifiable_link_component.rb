@@ -58,7 +58,7 @@ class NotificationNotifiableLinkComponent < ApplicationComponent
       # This reportable won't be nil once we fix this: https://trello.com/c/vPDiLjIQ/66-prevent-the-creation-of-reports-without-reportable
       "Favored #{@notification.notifiable.reports.first.reportable&.class&.name} Report".squish
     when 'Event::AppealCreated'
-      "Appeal for decision #{@notification.notifiable.decision.inspect}"
+      "Appealed the decision for a report of #{@notification.notifiable.decision.moderator.login}"
     when 'Event::WorkflowRunFail'
       'Workflow Run'
     end
@@ -120,7 +120,7 @@ class NotificationNotifiableLinkComponent < ApplicationComponent
       reportable = @notification.notifiable.reports.first.reportable
       link_for_reportables(reportable)
     when 'Event::AppealCreated'
-      Rails.application.routes.url_helpers.appeals_path(@notification.notifiable)
+      Rails.application.routes.url_helpers.appeal_path(@notification.notifiable)
     when 'Event::WorkflowRunFail'
       Rails.application.routes.url_helpers.token_workflow_run_path(@notification.notifiable.token, @notification.notifiable)
     end

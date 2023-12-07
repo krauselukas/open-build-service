@@ -24,6 +24,8 @@
                                                show_reports: @show_reports)
   = render NotificationFilterLinkComponent.new(text: 'Workflow Runs', amount: @count['workflow_runs'], icon: 'fas fa-book-open',
                                                filter_item: { type: 'workflow_runs' }, selected_filter: @selected_filter)
+  = render NotificationFilterLinkComponent.new(text: 'Appealed Decisions', amount: @count['workflow_runs'], icon: 'fas fa-hand',
+                                               filter_item: { type: 'workflow_runs' }, selected_filter: @selected_filter)
 
 - unless @projects_for_filter.empty?
   .list-group.list-group-flush.mt-5.mb-2
