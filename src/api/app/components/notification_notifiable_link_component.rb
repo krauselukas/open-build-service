@@ -120,7 +120,7 @@ class NotificationNotifiableLinkComponent < ApplicationComponent
       reportable = @notification.notifiable.reports.first.reportable
       link_for_reportables(reportable)
     when 'Event::AppealCreated'
-      Rails.application.routes.url_helpers.decision_appeal_path(@notification.notifiable.decision, @notification.notifiable)
+      Rails.application.routes.url_helpers.appeals_path(@notification.notifiable)
     when 'Event::WorkflowRunFail'
       Rails.application.routes.url_helpers.token_workflow_run_path(@notification.notifiable.token, @notification.notifiable)
     end

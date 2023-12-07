@@ -1,15 +1,15 @@
 %h3 Reports:
 %ul
-  - @decision.reports.each do |report|
+  - @appeal.decision.reports.each do |report|
     %li
       = link_to report.reportable_type, report.reportable
       = report.reason
 
 %h3 Decision:
-- if @decision.kind == "favor"
+- if @appeal.decision.kind == "favor"
   %p Favored decision
   %p reason:
-  = @decision.reason
+  = @appeal.decision.reason
 
 %h3 Appeal:
 %p Reason for appealing the decision

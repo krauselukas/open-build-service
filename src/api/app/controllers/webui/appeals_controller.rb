@@ -1,12 +1,17 @@
 class Webui::AppealsController < Webui::WebuiController
+  after_action :verify_authorized
+
   def new
     @decision = Decision.find(params[:decision_id])
     @appeal = Appeal.new(decision: @decision)
+
+    authorize @appeal
   end
 
   def show
-    @decision = Decision.find(show_params[:decision_id])
-    @appeal = Appeal.find(show_params[:id])
+    @appeal = Appeal.find(params[:id])
+
+    authorize @appeal
   end
 
   def create
@@ -15,9 +20,11 @@ class Webui::AppealsController < Webui::WebuiController
     @appeal.decision = @decision
     @appeal.appellant = User.session!
 
+    authorize @appeal
+
     if @appeal.save
       flash[:success] = "Appeal created successfully!"
-      redirect_to [@decision, @appeal]
+      redirect_to @appeal
     else
       flash[:error] = @appeal.errors.full_messages.to_sentence
       render "new"
@@ -25,10 +32,6 @@ class Webui::AppealsController < Webui::WebuiController
   end
 
   private
-
-  def show_params
-    params.permit(:decision_id, :id)
-  end
 
   def decision_params
     params.require(:decision_id)

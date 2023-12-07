@@ -1,18 +1,26 @@
-= form_with(model: [@decision, @appeal], method: :post) do |form|
-  %h3 Reports:
-  %ul
-    - @decision.reports.each do |report|
-      %li
-        = link_to report.reportable_type, report.reportable
-        = report.reason
+.card
+  .card-body
 
-  %h3 Decision:
-  - if @decision.kind == "favor"
-    %p Favored decision
-    %p reason:
-    = @decision.reason
+    %h3 Reports Received:
+    %ul
+      - @decision.reports.each do |report|
+        %li
+          = link_to report.reportable_type, report.reportable
+          = report.reason
 
-  %h3 Appeal:
-  %p= form.label :reason, 'Reason for appealing the decision'
-  = form.text_field :reason
-  = form.submit
+.card
+  .card-body
+    %h3 Decision Made By Moderator:
+    - if @decision.kind == "favor"
+      %p Favored decision
+      %p reason:
+      = @decision.reason
+
+.card
+  .card-body
+    %h3 Appeal The Decision:
+
+    = form_with(model: [@decision, @appeal], method: :post) do |form|
+      %p= form.label :reason, 'Reason for appealing the decision'
+      = form.text_field :reason
+      = form.submit

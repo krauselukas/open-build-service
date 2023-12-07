@@ -444,8 +444,10 @@ OBSApi::Application.routes.draw do
 
   resources :reports, only: [:create], controller: 'webui/reports'
   resources :decisions, only: [:create], controller: 'webui/decisions' do
-    resources :appeals, controller: 'webui/appeals'
+    resources :appeals, only: [:new, :create], controller: 'webui/appeals'
   end
+  resources :appeals, only: [:show], controller: 'webui/appeals'
+
   controller 'webui/comment_locks' do
     post '/comment_locks' => :create, as: 'comment_lock'
     delete '/comment_locks/:comment_lock_id' => :destroy, as: 'comment_unlock'
