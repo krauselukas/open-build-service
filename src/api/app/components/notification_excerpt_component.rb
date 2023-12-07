@@ -15,7 +15,7 @@ class NotificationExcerptComponent < ApplicationComponent
            when 'Comment'
              helpers.render_without_markdown(@notifiable.body)
            when 'Report', 'Decision'
-             "#{@notifiable.reason}<br/>#{link_to('Appeal this decision', new_decision_appeal_path(@notifiable))}".html_safe
+             @notifiable.reason
            when 'WorkflowRun'
              "In repository #{@notifiable.repository_full_name}"
            else
