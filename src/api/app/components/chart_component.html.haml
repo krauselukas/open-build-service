@@ -32,6 +32,7 @@
             .col-9.d-flex.flex-wrap.gap-1.justify-content-start
               - raw_data.each do |result|
                 - if result[:repository] == repo
-                  %span.ps-2.pe-2.align-self-start{ class: status_color(result[:status]),
-                                        title: "#{result[:project_name]}/#{result[:package_name]}" }
-                    = result[:architecture]
+                  = link_to(result[:architecture], request_build_results_path(bs_request_number, "package_#{result[:package_name]}": 1,
+                            "repo_#{repo}": 1, "arch_#{result[:architecture]}": 1, "status_#{result[:status]}": 1),
+                            class: "btn btn-#{status_color(result[:status])} btn-sm ps-2 pe-2 align-self-start",
+                            title: "#{result[:project_name]}/#{result[:package_name]}")

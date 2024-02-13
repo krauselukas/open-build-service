@@ -1,14 +1,15 @@
 class ChartComponent < ApplicationComponent
-  attr_reader :raw_data
+  attr_reader :raw_data, :bs_request_number
 
   # parameters to decide whether the column_chart will be displayed or the simplified version will
   MINIMUM_DISTINCT_BUILD_REPOSITORIES = 5
   MINIMUM_BUILD_RESULTS = 12
 
-  def initialize(raw_data:)
+  def initialize(raw_data:, bs_request_number:)
     super
 
     @raw_data = raw_data
+    @bs_request_number = bs_request_number
   end
 
   def chart_data
@@ -49,11 +50,11 @@ class ChartComponent < ApplicationComponent
 
   def status_color(status)
     build_result = Buildresult.new(status)
-    return 'text-bg-success' if build_result.successful_final_status?
-    return 'text-bg-danger' if build_result.unsuccessful_final_status?
-    return 'text-bg-warning' if build_result.in_progress_status?
+    return 'success' if build_result.successful_final_status?
+    return 'danger' if build_result.unsuccessful_final_status?
+    return 'warning' if build_result.in_progress_status?
 
-    'text-bg-light' if build_result.refused_status?
+    'light' if build_result.refused_status?
   end
 
   def legend

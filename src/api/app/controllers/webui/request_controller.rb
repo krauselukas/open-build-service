@@ -320,7 +320,7 @@ class Webui::RequestController < Webui::WebuiController
   end
 
   def chart_build_results
-    render partial: 'webui/request/chart_build_results', locals: { chart_build_results_data: build_results_data }
+    render partial: 'webui/request/chart_build_results', locals: { chart_build_results_data: build_results_data, bs_request_number: @bs_request.number }
   end
 
   def complete_build_results
