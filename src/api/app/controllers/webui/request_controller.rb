@@ -41,7 +41,7 @@ class Webui::RequestController < Webui::WebuiController
       @diff_to_superseded_id = params[:diff_to_superseded]
       @is_author = @bs_request.creator == User.possibly_nobody.login
 
-      @is_target_maintainer = @bs_request.is_target_maintainer?(User.session)
+      @is_target_maintainer = BsRequestPolicy.new(User.session, @bs_request).target_maintainer?
       @can_handle_request = @bs_request.state.in?(%i[new review declined]) && (@is_target_maintainer || @is_author)
 
       @history = @bs_request.history_elements.includes(:user)
@@ -535,7 +535,6 @@ class Webui::RequestController < Webui::WebuiController
 
   def prepare_request_data
     @is_author = @bs_request.creator == User.possibly_nobody.login
-    @is_target_maintainer = @bs_request.is_target_maintainer?(User.session)
     @my_open_reviews = ReviewsFinder.new(@bs_request.reviews).open_reviews_for_user(User.session).reject(&:staging_project?)
 
     @diff_limit = params[:full_diff] ? 0 : nil
