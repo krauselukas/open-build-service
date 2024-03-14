@@ -53,7 +53,7 @@ class CommentPolicy < ApplicationPolicy
     when 'Project'
       user.has_local_permission?('change_project', record.commentable)
     when 'BsRequest'
-      record.commentable.is_target_maintainer?(user)
+      BsRequestPolicy.new(user, record.commentable).target_maintainer?
     end
   end
 

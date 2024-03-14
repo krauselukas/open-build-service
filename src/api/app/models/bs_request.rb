@@ -907,11 +907,6 @@ class BsRequest < ApplicationRecord
     end
   end
 
-  # Check if 'user' is maintainer in _all_ request targets:
-  def is_target_maintainer?(user)
-    bs_request_actions.all? { |action| action.is_target_maintainer?(user) }
-  end
-
   def sanitize!
     # apply default values, expand and do permission checks
     self.creator ||= User.session!.login
