@@ -58,10 +58,6 @@ class SCMWebhook
     github_pull_request? || gitlab_merge_request? || gitea_pull_request?
   end
 
-  def ignored_pull_request_action?
-    ignored_github_pull_request_action? || ignored_gitlab_merge_request_action? || ignored_gitea_pull_request_action?
-  end
-
   def ping_event?
     github_ping? || gitea_ping?
   end
@@ -114,18 +110,6 @@ class SCMWebhook
 
   def gitea_ping?
     @payload[:scm] == 'gitea' && @payload[:event] == 'ping'
-  end
-
-  def ignored_github_pull_request_action?
-    github_pull_request? && ALLOWED_PULL_REQUEST_ACTIONS.exclude?(@payload[:action])
-  end
-
-  def ignored_gitlab_merge_request_action?
-    gitlab_merge_request? && ALLOWED_MERGE_REQUEST_ACTIONS.exclude?(@payload[:action])
-  end
-
-  def ignored_gitea_pull_request_action?
-    gitea_pull_request? && ALLOWED_PULL_REQUEST_ACTIONS.exclude?(@payload[:action])
   end
 
   def ignored_github_push_event?
