@@ -32,8 +32,7 @@ class Token::Workflow < Token
       SCMStatusReporter.new(workflow_run.payload, workflow_run.payload, scm_token, workflow_run, 'success', initial_report: true).call
       return []
     end
-
-    yaml_file = Workflows::YAMLDownloader.new(workflow_run.payload, token: self).call
+    yaml_file = Workflows::YAMLDownloader.new(workflow_run, token: self).call
     @workflows = Workflows::YAMLToWorkflowsService.new(yaml_file: yaml_file, token: self, workflow_run: workflow_run).call
 
     return validation_errors unless validation_errors.none?
