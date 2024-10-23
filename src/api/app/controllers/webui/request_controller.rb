@@ -30,7 +30,7 @@ class Webui::RequestController < Webui::WebuiController
                                   if: -> { Flipper.enabled?(:request_show_redesign, User.session) }
   before_action :check_beta_user_redirect, only: %i[beta_show build_results rpm_lint changes mentioned_issues]
   before_action :redirect_to_tasks, only: [:index], unless: -> { Flipper.enabled?(:request_index, User.session) }
-  before_action :set_requests, :set_filter_involvement, :set_filter_state, :set_filter_action_type, :set_filter_creators,
+  before_action :set_filter_involvement, :set_filter_state, :set_filter_action_type, :set_filter_creators,
                 :filter_requests, :set_selected_filter, only: [:index], if: lambda {
                                                                               Flipper.enabled?(:request_index, User.session)
                                                                             }
@@ -338,10 +338,6 @@ class Webui::RequestController < Webui::WebuiController
     redirect_to my_tasks_path
   end
 
-  def set_requests
-    @bs_requests = BsRequest.all
-  end
-
   def set_filter_involvement
     @filter_involvement = params[:involvement].presence || 'all'
     @filter_involvement = 'all' if ALLOWED_INVOLVEMENTS.exclude?(@filter_involvement)
@@ -362,11 +358,12 @@ class Webui::RequestController < Webui::WebuiController
   end
 
   def filter_requests
-    @bs_requests = filter_by_text(params[:requests_search_text])
-    @bs_requests = filter_by_involvement(@bs_requests, @filter_involvement)
+    @bs_requests = filter_by_involvement(@filter_involvement)
     @bs_requests = @bs_requests.where(state: @filter_state) if @filter_state.present?
     @bs_requests = @bs_requests.with_action_type(@filter_action_type) if @filter_action_type.present?
     @bs_requests = @bs_requests.where(creator: @filter_creators) if @filter_creators.present?
+
+    @bs_requests = filter_by_text(@bs_requests, params[:requests_search_text])
   end
 
   def set_selected_filter
