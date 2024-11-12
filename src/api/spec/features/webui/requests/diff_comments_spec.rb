@@ -17,10 +17,10 @@ RSpec.describe 'Comments with diff', :js, :vcr do
            source_package: source_package)
   end
 
-  let!(:comment) { create(:comment, commentable: bs_request.bs_request_actions.first, diff_file_index: 0, diff_line_number: 1, user: admin) }
-
   context 'reply comment' do
     describe 'when under the beta program' do
+      let!(:comment) { create(:comment, commentable: bs_request.bs_request_actions.first, diff_file_index: 0, diff_line_number: 1, user: admin) }
+
       before do
         Flipper.enable(:request_show_redesign, admin)
         login admin
@@ -37,6 +37,34 @@ RSpec.describe 'Comments with diff', :js, :vcr do
         expect(page).to have_text('This is a new reply')
         expect(page).to have_text('target_project/target_package > package_a.changes')
       end
+    end
+  end
+
+  describe 'create diff comment' do
+    before do
+      Flipper.enable(:request_show_redesign, admin)
+      login admin
+
+      visit request_changes_path(bs_request)
+      sleep(0.5) # wait for file diff to be loaded
+      find_by_id('diff_1_n2').hover # make add comment link visible
+      within('#commentdiff_1_n2') do
+        find('a', class: 'line-new-comment').click
+        sleep(0.5) # wait for comment box to appear
+        fill_in 'new_comment_diff_1_n2_body', with: 'My test diff comment'
+        find('input[type="submit"]').click
+        sleep(0.5) # wait for comment to be created
+      end
+    end
+
+    it 'displays the comment on the file diff in the changes tab' do
+      expect(page).to have_css("#comment-#{Comment.last.id}-body", text: 'My test diff comment')
+    end
+
+    it 'displays the comment in the conversation tab' do
+      visit request_show_path(bs_request)
+      expect(page).to have_css("#comment-#{Comment.last.id}-body", text: 'My test diff comment')
+      expect(page).to have_css("#comment-#{Comment.last.id}-bubble", text: 'target_project/target_package > package_a.spec')
     end
   end
 end
