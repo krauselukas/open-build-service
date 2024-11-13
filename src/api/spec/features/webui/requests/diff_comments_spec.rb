@@ -14,7 +14,8 @@ RSpec.describe 'Comments with diff', :js, :vcr do
   let(:bs_request) do
     create(:bs_request_with_submit_action,
            target_package: target_package,
-           source_package: source_package)
+           source_package: source_package,
+           source_rev: source_package.dir_hash['srcmd5'])
   end
 
   context 'reply comment' do
@@ -78,6 +79,45 @@ RSpec.describe 'Comments with diff', :js, :vcr do
 
     it 'displays the comment with a hint to the corresponding file and line' do
       expect(page).to have_css('#comments-list', text: "Inline comment for target: 'target_project/target_package', file: 'package_a.changes', and line: 1.")
+    end
+  end
+
+  describe 'source package file gets altered after inline diff comment was created' do
+    let!(:comment) do
+      create(:comment, commentable: bs_request.bs_request_actions.first, diff_file_index: 0, diff_line_number: 1, user: admin, source_rev: bs_request.bs_request_actions.first.source_rev,
+                       target_rev: target_package.dir_hash['srcmd5'])
+    end
+
+    before do
+      Flipper.enable(:request_show_redesign, admin)
+      login admin
+      source_package.save_file(file: 'The content of the changes file has completly changed!', filename: "#{source_package.name}.changes", comment: 'No reason, this is just a test...')
+      bs_request.bs_request_actions.first.update(source_rev: source_package.dir_hash['srcmd5'])
+    end
+
+    context 'changes tab' do
+      before do
+        visit request_changes_path(bs_request)
+      end
+
+      it 'the changes from the altered source package file are displayed in the diff' do
+        expect(page).to have_text('The content of the changes file has completly changed!')
+      end
+
+      it 'does not display the outdated comment in the changes tab' do
+        expect(page).to have_no_text(comment.body)
+      end
+    end
+
+    context 'conversation tab' do
+      before do
+        visit request_show_path(bs_request)
+      end
+
+      it 'keeps showing the comment in the conversation with a hint that it is outdated' do
+        expect(find_by_id("comment-#{comment.id}-bubble")).to have_text(comment.body)
+        expect(page).to have_css('span.badge.text-bg-warning', text: 'Outdated')
+      end
     end
   end
 end
