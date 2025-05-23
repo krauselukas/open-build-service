@@ -1,10 +1,8 @@
 class RequestDecisionComponent < ApplicationComponent
-  def initialize(bs_request:, action:, is_target_maintainer:, package_maintainers:, show_project_maintainer_hint:)
+  def initialize(bs_request:, package_maintainers:, show_project_maintainer_hint:)
     super
 
     @bs_request = bs_request
-    @is_target_maintainer = is_target_maintainer
-    @action = action
     @package_maintainers = package_maintainers
     @creator = bs_request.creator
 
@@ -20,10 +18,6 @@ class RequestDecisionComponent < ApplicationComponent
     policy(@bs_request).handle_request?
   end
 
-  def single_action_request
-    @single_action_request ||= @bs_request.bs_request_actions.count == 1
-  end
-
   def confirmation
     if @bs_request.state == :review
       { confirm: "Do you really want to approve this request, despite of open review requests?\n\n#{@package_maintainers_hint}" }
@@ -36,11 +30,27 @@ class RequestDecisionComponent < ApplicationComponent
     { confirm: "Do you really want to #{decision_text} this request?\n\n#{@package_maintainers_hint}" }
   end
 
-  def accept_with_options_allowed?
-    single_action_request && @is_target_maintainer && @bs_request.state.in?(%i[new review])
+  def forwards_names
+    names = forwards.map { |forward| forward.values.take(2).join('/') }
+    names.push("#{forwards.length} more") if forwards.length > 4
+    names.to_sentence
   end
 
-  def make_maintainer_of
-    @action.target_project + ("/#{@action.target_package}" if @action.target_package)
+  def target_names
+    names = submit_actions.first(2).map(&:uniq_key)
+    names.push("#{forwards.length} more") if submit_actions.length > 4
+    names.to_sentence
+  end
+
+  private
+
+  def forwards
+    return [] unless submit_actions.any?
+
+    submit_actions.flat_map { |submit_action| submit_action.forward }
+  end
+
+  def submit_actions
+    @bs_request.bs_request_actions.where(type: :submit)
   end
 end
