@@ -1,7 +1,8 @@
 class WriteAndPreviewComponent < ApplicationComponent
   attr_reader :form, :preview_message_url, :message_body_param, :text_area_attributes, :canned_responses_enabled
 
-  def initialize(form:, preview_message_url:, message_body_param:, text_area_attributes: {}, canned_responses_enabled: false)
+  def initialize(form:, preview_message_url:, message_body_param:, text_area_attributes: {}, canned_responses_enabled: false,
+                 commentable_id: nil, commentable_type: nil, diff_file_index: nil, diff_line: nil)
     super
 
     @form = form
