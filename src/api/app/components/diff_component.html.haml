@@ -54,8 +54,25 @@
                                                         diff_file_index: file_index, diff_line_number: line.index,
                                                         source_rev:, target_rev:),
                             class: 'btn btn-sm btn-primary line-new-comment', remote: true, title: 'Add comment', data: { diff_file_index: file_index, diff_line: line.index,
-                            commentable_type: commentable.class.name.underscore, commentable_id: commentable.id }) do
+                            commentable_type: commentable.class.name, commentable_id: commentable.id }) do
                     %i.fas.fa-comment-medical
                     .visually-hidden
                       Add comment
                 -# rubocop:enable ViewComponent/AvoidGlobalState
+
+:javascript
+
+  openDraftCommentForm('#{commentable.class.name}', '#{commentable.id}')
+
+  function openDraftCommentForm(commentableType, commentableId) {
+    if (Object.keys(sessionStorage).includes(`${commentableType}_${commentableId}`)) {
+
+      let draftCommentData = JSON.parse(sessionStorage.getItem(`${commentableType}_${commentableId}`));
+      let draftCommentBoxLink = document.querySelectorAll(`[data-diff-line="${draftCommentData.diff_line_number}"][data-diff-file-index="${draftCommentData.diff_file_index}"]`)[0];
+      if (draftCommentBoxLink) {
+        draftCommentBoxLink.click();
+      }
+    }
+  }
+
+

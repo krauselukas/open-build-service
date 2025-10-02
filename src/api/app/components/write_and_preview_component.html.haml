@@ -21,7 +21,35 @@
 
 :javascript
   attachPreviewMessageOnCommentBoxes();
-  persistDraftCommentTextTest('#{form.id}', '#{commentable_type}', '#{commentable_id}', '#{diff_line_number}', '#{diff_file_index}');
+  test();
+
+  function test() {
+    let commentForm = document.querySelector('[id^="new_comment_diff"]');
+
+    if (!commentForm) return;
+
+    let commentTextArea = commentForm.getElementsByTagName("textarea")[0];
+    var diffFileIndex = null;
+    var diffLineNumber = null;
+
+    if (commentForm.querySelector('[name="comment[diff_file_index]"]')) {
+      diffFileIndex = commentForm.querySelector('[name="comment[diff_file_index]"]').value;
+    }
+
+    if (commentForm.querySelector('[name="comment[diff_line_number]"]').value) {
+      diffLineNumber = commentForm.querySelector('[name="comment[diff_line_number]"]').value
+    }
+
+    commentTextArea.addEventListener('change', (event) => {
+      if (diffLineNumber && diffFileIndex) {
+        let commentableType = commentForm.querySelector('[name="commentable_type"]').value;
+        let commentableId = commentForm.querySelector('[name="commentable_id"]').value;
+
+        let commentDraft = JSON.stringify({ diff_line_number: diffLineNumber, diff_file_index: diffFileIndex, comment_draft_text: event.target.value});
+        sessionStorage.setItem(`${commentableType}_${commentableId}`, commentDraft);
+      }
+    });
+  }
 
   function persistDraftCommentTextTest(formId, commentableType, commentableId, diffLineNumber, diffFileIndex) { // jshint ignore:line
     let form = document.getElementById(formId);
