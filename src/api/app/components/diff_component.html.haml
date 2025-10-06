@@ -60,19 +60,27 @@
                       Add comment
                 -# rubocop:enable ViewComponent/AvoidGlobalState
 
-:javascript
+- if commentable.present?
+  :javascript
+    openDraftCommentForm('#{commentable.class.name}', '#{commentable.id}')
 
-  openDraftCommentForm('#{commentable.class.name}', '#{commentable.id}')
+    function openDraftCommentForm(commentableType, commentableId) {
+      var regex = new RegExp(`${commentableType}_${commentableId}`);
 
-  function openDraftCommentForm(commentableType, commentableId) {
-    if (Object.keys(sessionStorage).includes(`${commentableType}_${commentableId}`)) {
-
-      let draftCommentData = JSON.parse(sessionStorage.getItem(`${commentableType}_${commentableId}`));
-      let draftCommentBoxLink = document.querySelectorAll(`[data-diff-line="${draftCommentData.diff_line_number}"][data-diff-file-index="${draftCommentData.diff_file_index}"]`)[0];
-      if (draftCommentBoxLink) {
-        draftCommentBoxLink.click();
-      }
+      Object.keys(sessionStorage).filter(function(k) { return regex.test(k); }).forEach(function(k) {
+        let draftCommentData = JSON.parse(sessionStorage.getItem(k));
+        let draftCommentBoxLink = document.querySelectorAll(`[data-diff-line="${draftCommentData.diff_line_number}"][data-diff-file-index="${draftCommentData.diff_file_index}"]`)[0];
+        if (draftCommentBoxLink) {
+          draftCommentBoxLink.click();
+        }
+      });
     }
-  }
+
+    function recoverDraftCommentText(diffFileIndex, diffLineNumber, draftCommentText) {
+      let commentForm = document.querySelector(`[id=new_comment_diff_${diffFileIndex}_n${diffLineNumber}_form]`);
+      var commentTextArea = commentForm.getElementsByTagName("textarea")[0];
+
+      commentTextArea.value = draftCommentText;
+    }
 
 

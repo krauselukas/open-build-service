@@ -21,14 +21,15 @@
 
 :javascript
   attachPreviewMessageOnCommentBoxes();
-  test();
+  persistDraftCommentTextTest();
 
-  function test() {
+  function persistDraftCommentTextTest() {
     let commentForm = document.querySelector('[id^="new_comment_diff"]');
-
     if (!commentForm) return;
 
-    let commentTextArea = commentForm.getElementsByTagName("textarea")[0];
+    var commentTextArea = commentForm.getElementsByTagName("textarea")[0];
+    var commentableType = commentForm.querySelector('[name="commentable_type"]').value;
+    var commentableId = commentForm.querySelector('[name="commentable_id"]').value;
     var diffFileIndex = null;
     var diffLineNumber = null;
 
@@ -42,16 +43,19 @@
 
     commentTextArea.addEventListener('change', (event) => {
       if (diffLineNumber && diffFileIndex) {
-        let commentableType = commentForm.querySelector('[name="commentable_type"]').value;
-        let commentableId = commentForm.querySelector('[name="commentable_id"]').value;
-
         let commentDraft = JSON.stringify({ diff_line_number: diffLineNumber, diff_file_index: diffFileIndex, comment_draft_text: event.target.value});
-        sessionStorage.setItem(`${commentableType}_${commentableId}`, commentDraft);
+        sessionStorage.setItem(`${commentableType}_${commentableId}_${diffFileIndex}_${diffLineNumber}`, commentDraft);
       }
     });
+
+    // insert draft comment into comment form on page load
+    if (sessionStorage.getItem(`${commentableType}_${commentableId}_${diffFileIndex}_${diffLineNumber}`)) {
+      let draftCommentData = JSON.parse(sessionStorage.getItem(`${commentableType}_${commentableId}_${diffFileIndex}_${diffLineNumber}`));
+      commentTextArea.value = draftCommentData.comment_draft_text;
+    }
   }
 
-  function persistDraftCommentTextTest(formId, commentableType, commentableId, diffLineNumber, diffFileIndex) { // jshint ignore:line
+  function bla(formId, commentableType, commentableId, diffLineNumber, diffFileIndex) { // jshint ignore:line
     let form = document.getElementById(formId);
     let commentTextArea = form.getElementsByTagName("textarea")[0];
 
