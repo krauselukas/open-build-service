@@ -2,6 +2,7 @@ class EventSubscription
   class Form
     EVENTS_FOR_CONTENT_MODERATORS = ['Event::Report', 'Event::AppealCreated'].freeze
     EVENTS_IN_CONTENT_MODERATION_BETA = ['Event::Decision', 'Event::CommentForReport'].freeze
+    EVENTS_IN_PACKAGE_VERSION_TRACKING_BETA = ['Event::PackageUpstreamVersionSourceChanged'].freeze
 
     attr_reader :subscriber
 
@@ -12,7 +13,7 @@ class EventSubscription
     def subscriptions_by_event
       event_classes = Event::Base.notification_events
       event_classes.filter_map do |event_class|
-        EventSubscription::ForEventForm.new(event_class, subscriber).call if show_form_for_content_moderation_events?(event_class: event_class, subscriber: subscriber)
+        EventSubscription::ForEventForm.new(event_class, subscriber).call if show_form_for_content_moderation_events?(event_class: event_class, subscriber: subscriber) && show_form_for_package_version_tracking_beta?(event_class: event_class, subscriber: subscriber)
       end
     end
 
@@ -54,6 +55,13 @@ class EventSubscription
       return true if subscriber.blank?
       return false if EVENTS_FOR_CONTENT_MODERATORS.include?(event_class.name) && !ReportPolicy.new(subscriber, Report).notify?
       return false if EVENTS_IN_CONTENT_MODERATION_BETA.include?(event_class.name) && !Flipper.enabled?(:content_moderation, subscriber)
+
+      true
+    end
+
+    def show_form_for_package_version_tracking_beta?(event_class:, subscriber:)
+      return true if subscriber.blank?
+      return false if EVENTS_IN_PACKAGE_VERSION_TRACKING_BETA.include?(event_class.name) && !Flipper.enabled?(:package_version_tracking, subscriber)
 
       true
     end

@@ -22,7 +22,8 @@ module NotificationService
                         'Event::AddedUserToGroup',
                         'Event::RemovedUserFromGroup',
                         'Event::AssignmentCreate',
-                        'Event::AssignmentDelete'].freeze
+                        'Event::AssignmentDelete',
+                        'Event::PackageUpstreamVersionSourceChanged'].freeze
     CHANNELS = %i[web rss].freeze
     ALLOWED_NOTIFIABLE_TYPES = {
       'BsRequest' => ::BsRequest,
@@ -33,7 +34,8 @@ module NotificationService
       'Decision' => ::Decision,
       'WorkflowRun' => ::WorkflowRun,
       'Appeal' => ::Appeal,
-      'Group' => ::Group
+      'Group' => ::Group,
+      'PackageVersionUpstream' => ::PackageVersionUpstream
     }.freeze
     ALLOWED_CHANNELS = {
       web: NotificationService::WebChannel,
@@ -49,7 +51,8 @@ module NotificationService
                         'Event::FavoredDecision',
                         'Event::WorkflowRunFail',
                         'Event::AddedUserToGroup',
-                        'Event::RemovedUserFromGroup'].freeze
+                        'Event::RemovedUserFromGroup',
+                        'Event::PackageUpstreamVersionSourceChanged'].freeze
 
     def initialize(event)
       @event = event
@@ -75,7 +78,6 @@ module NotificationService
       return if channel == :rss && subscription.subscriber.rss_secret.blank?
       return unless notifiable_exists?
       return if skip_report_notification?(event: @event, subscriber: subscription.subscriber)
-
       ALLOWED_CHANNELS[channel].new(subscription, @event).call
     end
 
