@@ -9,7 +9,7 @@ class PackageVersionUpstream < PackageVersion
   #### Attributes
 
   #### Associations macros (Belongs to, Has one, Has many)
-
+  #has_many :notifications, as: :notifiable, dependent: :delete_all
   #### Callbacks macros: before_save, after_save, etc.
   after_create :create_package_upstream_version_source_changed_event
   #### Scopes (first the default_scope macro if is used)
@@ -30,7 +30,7 @@ class PackageVersionUpstream < PackageVersion
     local_version = package.latest_local_version&.version
 
     Event::PackageUpstreamVersionSourceChanged.create(local_version: local_version, upstream_version: version,
-                                                      package: package.name, project: package.project.name)
+                                                      package: package.name, project: package.project.name, package_version_upstream_id: id)
   end
 end
 

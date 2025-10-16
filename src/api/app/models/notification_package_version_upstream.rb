@@ -1,0 +1,3 @@
+class NotificationPackageVersionUpstream < Notification
+
+end
