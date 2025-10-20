@@ -213,6 +213,10 @@ module Event
       ret
     end
 
+    def devel_package_maintainers
+      _roles('maintainer', payload['develproject'], payload['develpackage'])
+    end
+
     def bugowners
       Rails.logger.debug { "Maintainers #{payload.inspect}" }
       ret = _roles('bugowner', payload['project'], payload['package'])

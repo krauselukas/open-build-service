@@ -28,6 +28,13 @@ class PackageVersionUpstream < PackageVersion
 
   def create_package_upstream_version_source_changed_event
     local_version = package.latest_local_version&.version
+    devel_package = package.develpackage
+
+    if devel_package.present?
+      Event::PackageUpstreamVersionSourceChanged.create(local_version: local_version, upstream_version: version,
+                                                        develpackage: devel_package.name, develproject: devel_package.project.name, package_version_upstream_id: id)
+      return
+    end
 
     Event::PackageUpstreamVersionSourceChanged.create(local_version: local_version, upstream_version: version,
                                                       package: package.name, project: package.project.name, package_version_upstream_id: id)
