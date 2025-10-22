@@ -61,6 +61,11 @@
                                                               key: 'kind[member_on_groups]', name: 'kind[]', value: 'member_on_groups',
                                                               label_icon: 'fas fa-people-group',
                                                               checked: selected_filter[:kind]&.include?('member_on_groups') }
+        - if Flipper.enabled?(:package_version_tracking, User.session)
+          = render partial: 'webui/shared/check_box', locals: { label: 'Upstream Project Updates', amount: counted_notifications['package_version_upstream'],
+                                                              key: 'kind[package_version_upstream]', name: 'kind[]',
+                                                              value: 'package_version_upstream', label_icon: 'fas fa-code-compare',
+                                                              checked: selected_filter[:kind]&.include?('package_version_upstream') }
 
     - if policy(Report.new).notify?
       .mt-2.mb-2.accordion-item.border-0.auto-submit-on-change

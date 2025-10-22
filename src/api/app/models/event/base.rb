@@ -207,6 +207,10 @@ module Event
     end
 
     def maintainers
+      # we only want to notify the devel package maintainers if a package
+      # has a devel package assigned for Event::PackageUpstreamVersionSourceChanged
+      return [] if devel_package_maintainers
+
       Rails.logger.debug { "Maintainers #{payload.inspect}" }
       ret = _roles('maintainer', payload['project'], payload['package'])
       Rails.logger.debug { "Maintainers ret #{ret.inspect}" }

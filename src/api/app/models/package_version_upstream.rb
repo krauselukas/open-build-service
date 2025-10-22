@@ -31,7 +31,7 @@ class PackageVersionUpstream < PackageVersion
     devel_package = package.develpackage
 
     if devel_package.present?
-      Event::PackageUpstreamVersionSourceChanged.create(local_version: local_version, upstream_version: version,
+      Event::PackageUpstreamVersionSourceChanged.create(local_version: local_version, upstream_version: version, package: package.name, project: package.project.name,
                                                         develpackage: devel_package.name, develproject: devel_package.project.name, package_version_upstream_id: id)
       return
     end
