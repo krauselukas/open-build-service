@@ -76,7 +76,7 @@ class Webui::Users::NotificationsController < Webui::WebuiController
       counted_notifications[notifications_key] = counted_notifiable_types[notification_types_key] || 0
     end
 
-    render partial: 'counter', locals: { id: "count_#{params[:notification_type]}", count: counted_notifications[params[:notification_type].to_s] }
+    render partial: 'webui/shared/turbo_counter', locals: { id: "count_#{params[:notification_type]}", count: counted_notifications[params[:notification_type].to_s] }
   end
 
   def count_for_event_types
@@ -89,7 +89,7 @@ class Webui::Users::NotificationsController < Webui::WebuiController
       counted_notifications[notifications_key] = counted_event_types[event_types_key] || 0
     end
 
-    render partial: 'counter', locals: { id: "count_#{params[:event_type]}", count: counted_notifications[params[:event_type].to_s] }
+    render partial: 'webui/shared/turbo_counter', locals: { id: "count_#{params[:event_type]}", count: counted_notifications[params[:event_type].to_s] }
   end
 
   def count_for_notification_kinds
@@ -106,7 +106,7 @@ class Webui::Users::NotificationsController < Webui::WebuiController
       count = unread_notifications.for_outgoing_requests(User.session).count
     end
 
-    render partial: 'counter', locals: { id: "count_#{params[:notification_kind]}", count: count }
+    render partial: 'webui/shared/turbo_counter', locals: { id: "count_#{params[:notification_kind]}", count: count }
   end
 
   def count_for_unread
