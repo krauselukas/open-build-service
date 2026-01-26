@@ -193,7 +193,6 @@ controller 'webui/project' do
   post 'project/restore' => :restore, constraints: cons, as: 'projects_restore'
   patch 'project/update' => :update, constraints: cons
   delete 'project/destroy' => :destroy
-  get 'project/requests/:project' => :requests, constraints: cons, as: 'project_requests'
   post 'project/remove_target_request' => :remove_target_request, as: 'project_remove_target_request'
   post 'project/remove_path_from_target' => :remove_path_from_target, as: 'remove_repository_path'
   post 'project/move_path/:project' => :move_path, as: 'move_repository_path'
@@ -239,6 +238,8 @@ end
 # \For backward compatibility
 
 resources :projects, only: [], param: :name do
+  resources :requests, controller: 'webui/projects/bs_requests', only: [:index], as: 'requests', constraints: cons
+
   resources :maintained_projects, controller: 'webui/projects/maintained_projects',
                                   param: :maintained_project, only: %i[index destroy create], constraints: cons
   resource :status, controller: 'webui/projects/status', only: [:show], constraints: cons
@@ -347,7 +348,6 @@ resources :requests, only: [], param: :number, controller: 'webui/request' do
   end
 end
 
-get 'projects/:project/requests' => 'webui/projects/bs_requests#index', constraints: cons, as: 'projects_requests'
 get 'projects/:project/packages/:package/requests' => 'webui/packages/bs_requests#index', constraints: cons, as: 'packages_requests'
 get 'notification/autocomplete_projects' => 'webui/users/notifications#autocomplete_projects', as: 'notification_autocomplete_projects'
 

@@ -28,7 +28,7 @@
               in #{state}
     - else
       - if Flipper.enabled?(:request_index, User.session)
-        = link_to(projects_requests_path(project)) do
+        = link_to(project_requests_path(project)) do
           No requests have been sent to this project.
       - else
         = link_to(project_requests_path(project)) do
