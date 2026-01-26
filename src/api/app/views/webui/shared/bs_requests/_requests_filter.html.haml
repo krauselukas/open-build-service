@@ -28,7 +28,9 @@
         = render partial: 'webui/shared/check_box', locals: { label: render(BsRequestStateBadgeComponent.new(state: state)),
                                                               key: "states[#{state}]", name: 'states[]',
                                                               value: state,
-                                                              checked: selected_filter[:states]&.include?(state.to_s) }
+                                                              checked: selected_filter[:states]&.include?(state.to_s),
+                                                              turbo_frame_path: url_for(controller: controller_namespace,
+                                                              action: 'count_for_request_states', state: state) }
 
   .mt-2.mb-2.accordion-item.border-0.auto-submit-on-change
     .px-3.py-2.accordion-button.no-style{ data: { 'bs-toggle': 'collapse', 'bs-target': '#request-filter-action' },
