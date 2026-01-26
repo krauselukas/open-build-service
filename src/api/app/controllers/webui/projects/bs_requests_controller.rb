@@ -4,7 +4,6 @@ module Webui
       include Webui::RequestsFilter
 
       before_action :set_project
-      before_action :redirect_legacy
       before_action :set_bs_requests
 
       def index
@@ -12,13 +11,20 @@ module Webui
           # FIXME: Once we roll out filter_requests should become a before_action
           filter_requests
           @bs_requests = @bs_requests.order(number: :desc).page(params[:page])
+        # TODO: Remove this else block once request_index beta is rolled out
         else
-          parsed_params = BsRequest::DataTable::ParamsParserWithStateAndType.new(params).parsed_params
-          requests_query = BsRequest::DataTable::FindForProjectQuery.new(@project, parsed_params)
-          @requests_data_table = BsRequest::DataTable::Table.new(requests_query, params[:draw])
+          if request.format.json?
+            parsed_params = BsRequest::DataTable::ParamsParserWithStateAndType.new(params).parsed_params
+            requests_query = BsRequest::DataTable::FindForProjectQuery.new(@project, parsed_params)
+            @requests_data_table = BsRequest::DataTable::Table.new(requests_query, params[:draw])
+          else
+            @default_request_type = params[:type] if params[:type]
+            @default_request_state = params[:state] if params[:state]
+          end
 
           respond_to do |format|
             format.json { render 'webui/shared/bs_requests/index' }
+            format.html { render 'webui/project/requests' }
           end
         end
       end
@@ -42,10 +48,6 @@ module Webui
         bs_requests_filters << @bs_requests.where(reviews: { project_id: @project.id }) if @selected_filter['involvement'].include?('review')
 
         @bs_requests = @bs_requests.merge(bs_requests_filters.inject(:or)) if bs_requests_filters.length.positive?
-      end
-
-      def redirect_legacy
-        redirect_to(project_requests_path(@project)) unless Flipper.enabled?(:request_index, User.session) || request.format.json?
       end
     end
   end

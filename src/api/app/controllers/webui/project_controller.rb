@@ -226,14 +226,6 @@ class Webui::ProjectController < Webui::WebuiController
                                              collapsed_repositories: params.fetch(:collapsedRepositories, {}) }
   end
 
-  # TODO: Remove this once request_index beta is rolled out
-  def requests
-    redirect_to(projects_requests_path(@project)) if Flipper.enabled?(:request_index, User.session)
-
-    @default_request_type = params[:type] if params[:type]
-    @default_request_state = params[:state] if params[:state]
-  end
-
   def restore
     project = Project.new(name: params[:project])
     authorize(project, :create?)
