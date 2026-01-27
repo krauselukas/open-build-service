@@ -8,9 +8,7 @@ end
 
 concern :request_countable do
   collection do
-    get :count_for_request_states
-    get :count_for_request_types
-    get :batch_count
+    get :counts_for_states_and_types
   end
 end
 

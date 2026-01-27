@@ -3,3 +3,8 @@
     <span><%= count %></span>
   <% end %>
 <% end %>
+<% @counts_grouped_by_type.each do |type, count| %>
+  <%= turbo_stream.update "count_#{type}" do %>
+    <span><%= count %></span>
+  <% end %>
+<% end %>
