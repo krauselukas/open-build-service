@@ -41,42 +41,58 @@
       = render partial: 'webui/shared/check_box', locals: { label: 'Bugowner Change', key: 'action_types[set_bugowner]',
                                                             name: 'action_types[]', value: 'set_bugowner',
                                                             label_icon: action_type_icon('set_bugowner'),
-                                                            checked: selected_filter[:action_types]&.include?('set_bugowner')}
+                                                            checked: selected_filter[:action_types]&.include?('set_bugowner'),
+                                                            turbo_frame_path: url_for(controller: controller_namespace,
+                                                            action: 'count_for_request_types', type: 'set_bugowner') }
 
       = render partial: 'webui/shared/check_box', locals: { label: 'Change Devel Project', key: 'action_types[change_devel]',
                                                             name: 'action_types[]', value: 'change_devel',
                                                             label_icon: action_type_icon('change_devel'),
-                                                            checked: selected_filter[:action_types]&.include?('change_devel')}
+                                                            checked: selected_filter[:action_types]&.include?('change_devel'),
+                                                            turbo_frame_path: url_for(controller: controller_namespace,
+                                                            action: 'count_for_request_types', type: 'change_devel') }
 
       = render partial: 'webui/shared/check_box', locals: { label: 'Delete', key: 'action_types[delete]',
                                                             name: 'action_types[]', value: 'delete',
                                                             label_icon: action_type_icon('delete'),
-                                                            checked: selected_filter[:action_types]&.include?('delete')}
+                                                            checked: selected_filter[:action_types]&.include?('delete'),
+                                                            turbo_frame_path: url_for(controller: controller_namespace,
+                                                            action: 'count_for_request_types', type: 'delete') }
 
       = render partial: 'webui/shared/check_box', locals: { label: 'Maintenance Incident', key: 'action_types[maintenance_incident]',
                                                             name: 'action_types[]', value: 'maintenance_incident',
                                                             label_icon: action_type_icon('maintenance_incident'),
-                                                            checked: selected_filter[:action_types]&.include?('maintenance_incident')}
+                                                            checked: selected_filter[:action_types]&.include?('maintenance_incident'),
+                                                            turbo_frame_path: url_for(controller: controller_namespace,
+                                                            action: 'count_for_request_types', type: 'maintenance_incident') }
 
       = render partial: 'webui/shared/check_box', locals: { label: 'Maintenance Release', key: 'action_types[maintenance_release]',
                                                             name: 'action_types[]', value: 'maintenance_release',
                                                             label_icon: action_type_icon('maintenance_release'),
-                                                            checked: selected_filter[:action_types]&.include?('maintenance_release')}
+                                                            checked: selected_filter[:action_types]&.include?('maintenance_release'),
+                                                            turbo_frame_path: url_for(controller: controller_namespace,
+                                                            action: 'count_for_request_types', type: 'maintenance_release') }
 
       = render partial: 'webui/shared/check_box', locals: { label: 'Release', key: 'action_types[release]',
                                                             name: 'action_types[]', value: 'release',
                                                             label_icon: action_type_icon('release'),
-                                                            checked: selected_filter[:action_types]&.include?('release')}
+                                                            checked: selected_filter[:action_types]&.include?('release'),
+                                                            turbo_frame_path: url_for(controller: controller_namespace,
+                                                            action: 'count_for_request_types', type: 'release') }
 
       = render partial: 'webui/shared/check_box', locals: { label: 'Role Change', key: 'action_types[add_role]',
                                                             name: 'action_types[]', value: 'add_role',
                                                             label_icon: action_type_icon('add_role'),
-                                                            checked: selected_filter[:action_types]&.include?('add_role')}
+                                                            checked: selected_filter[:action_types]&.include?('add_role'),
+                                                            turbo_frame_path: url_for(controller: controller_namespace,
+                                                            action: 'count_for_request_types', type: 'add_role') }
 
       = render partial: 'webui/shared/check_box', locals: { label: 'Submit', key: 'action_types[submit]',
                                                             name: 'action_types[]', value: 'submit',
                                                             label_icon: action_type_icon('submit'),
-                                                            checked: selected_filter[:action_types]&.include?('submit')}
+                                                            checked: selected_filter[:action_types]&.include?('submit'),
+                                                            turbo_frame_path: url_for(controller: controller_namespace,
+                                                            action: 'count_for_request_types', type: 'submit') }
 
   .mt-2.mb-2.accordion-item.border-0.auto-submit-on-change
     .px-3.py-2.accordion-button.no-style{ data: { 'bs-toggle': 'collapse', 'bs-target': '#request-filter-priority' },
