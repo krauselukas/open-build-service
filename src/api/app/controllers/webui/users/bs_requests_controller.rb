@@ -34,6 +34,14 @@ module Webui
         end
       end
 
+      def batch_count
+        @counts_grouped_by_state = @bs_requests.group(:state).order(:state).count
+
+        respond_to do |format|
+          format.turbo_stream
+        end
+      end
+
       private
 
       def set_bs_requests

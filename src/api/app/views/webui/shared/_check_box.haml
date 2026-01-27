@@ -7,7 +7,9 @@
           %i.me-1{ class: label_icon }
         = label
   - if defined?(turbo_frame_path)
-    = turbo_frame_tag "count_#{value}", loading: 'lazy', src: turbo_frame_path do
+    -# = turbo_frame_tag "count_#{value}", loading: 'lazy', src: turbo_frame_path do
+    -#   %i.fas.fa-spinner.fa-spin
+    %span{ id: "count_#{value}" }
       %i.fas.fa-spinner.fa-spin
   - elsif defined?(amount) && amount.positive?
     %span= amount

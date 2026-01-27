@@ -1,0 +1,5 @@
+<% @counts_grouped_by_state.each do |state, count| %>
+  <%= turbo_stream.update "count_#{state}" do %>
+    <span><%= count %></span>
+  <% end %>
+<% end %>

@@ -271,5 +271,6 @@
   = link_to('Clear', url, class: 'btn btn-light border')
 
 - content_for(:content_for_head, javascript_include_tag('webui/content-selector-filters'))
+= turbo_frame_tag("batch_count_processor", src: batch_count_my_requests_path(format: :turbo_stream))
 
 -# haml-lint:enable ViewLength

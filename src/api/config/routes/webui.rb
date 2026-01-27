@@ -10,6 +10,7 @@ concern :request_countable do
   collection do
     get :count_for_request_states
     get :count_for_request_types
+    get :batch_count
   end
 end
 
