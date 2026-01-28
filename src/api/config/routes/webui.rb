@@ -6,6 +6,12 @@ constraints(RoutesHelper::RoleMatcher) do
   mount Flipper::UI.app(Flipper) => '/flipper'
 end
 
+concern :countable_requests do
+  collection do
+    get :counts_for_states_and_types
+  end
+end
+
 resources :news_items, only: %i[index new create edit update destroy], controller: 'webui/status_messages' do
   collection do
     post 'preview'
@@ -238,7 +244,7 @@ end
 # \For backward compatibility
 
 resources :projects, only: [], param: :name do
-  resources :requests, controller: 'webui/projects/bs_requests', only: [:index], as: 'requests', constraints: cons
+  resources :requests, controller: 'webui/projects/bs_requests', only: [:index], as: 'requests', constraints: cons, concerns: :countable_requests
 
   resources :maintained_projects, controller: 'webui/projects/maintained_projects',
                                   param: :maintained_project, only: %i[index destroy create], constraints: cons
@@ -374,7 +380,7 @@ end
 
 scope :my do
   resources :tasks, only: [:index], controller: 'webui/users/tasks', as: :my_tasks
-  resources :requests, only: [:index], controller: 'webui/users/bs_requests', as: :my_requests
+  resources :requests, only: [:index], controller: 'webui/users/bs_requests', as: :my_requests, concerns: :countable_requests
 
   resources :notifications, only: [:index], controller: 'webui/users/notifications', as: :my_notifications do
     collection do
