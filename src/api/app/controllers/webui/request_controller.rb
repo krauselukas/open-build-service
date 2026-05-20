@@ -553,7 +553,7 @@ class Webui::RequestController < Webui::WebuiController
   end
 
   def set_actions
-    @actions = @bs_request.bs_request_actions
+    @actions = @bs_request.bs_request_actions.preload(:target_package_object, :source_package_object)
   end
 
   # [DEPRECATED] TODO: remove once request_workflow_redesign beta is rolled out
