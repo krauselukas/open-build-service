@@ -912,12 +912,12 @@ class BsRequest < ApplicationRecord
 
   # Check if 'user' is maintainer in _all_ request sources:
   def source_maintainer?(user)
-    bs_request_actions.preload(:source_project_object, :source_package_object).all? { |action| action.source_maintainer?(user) }
+    BsRequestAction.where(bs_request: self).preload(:source_project_object, :source_package_object).all? { |action| action.source_maintainer?(user) }
   end
 
   # Check if 'user' is maintainer in _all_ request targets:
   def target_maintainer?(user)
-    bs_request_actions.preload(:target_package_object, :target_project_object).all? { |action| action.target_maintainer?(user) }
+    BsRequestAction.where(bs_request: self).preload(:target_package_object, :target_project_object).all? { |action| action.target_maintainer?(user) }
   end
 
   def sanitize!
