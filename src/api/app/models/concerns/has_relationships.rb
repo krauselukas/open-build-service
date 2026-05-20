@@ -19,7 +19,7 @@ module HasRelationships
   end
 
   def groups
-    relationships.groups.includes(:group).map(&:group).uniq
+    Group.joins(:relationships).merge(relationships.groups).distinct
   end
 
   def render_relationships(xml)
